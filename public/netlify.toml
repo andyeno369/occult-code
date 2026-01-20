@@ -1,9 +1,0 @@
-[build]
-  # Netlifyに「Rustの準備をして、記事変換ツールを動かして、サイトを作ってね」と命令します
-  command = "rustup target add wasm32-unknown-unknown && cargo install trunk && cargo run --bin gen_posts && trunk build --release"
-  # 公開するフォルダ
-  publish = "dist"
-
-[build.environment]
-  # Rustのバージョン指定
-  RUST_VERSION = "stable"
