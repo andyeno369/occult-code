@@ -1,4 +1,3 @@
 [build]
-  # Rustの安定版をインストール → 設定 → ビルド という完全手順にします
   command = "rustup toolchain install stable && rustup default stable && rustup target add wasm32-unknown-unknown && cargo install trunk && cargo run --bin gen_posts && trunk build --release"
   publish = "dist"
