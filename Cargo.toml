@@ -10,5 +10,5 @@ reqwasm = "0.5" # 0.6はまだないので0.5でOK
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 wasm-bindgen-futures = "0.4"
-
 web-sys = { version = "0.3", features = ["HtmlInputElement"] }
+regex = "1.10"
