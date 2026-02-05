@@ -2,10 +2,10 @@
   "posts": [
     {
       "id": 1,
-      "title": "System Initialization",
+      "title": "System Activation Test",
       "date": "2026-02-06",
-      "image": "",
-      "body": "# Welcome to the System\n\nこれはテスト記事です。**太字**やリストも使えます。\n\n- 項目1\n- 項目2"
+      "image": "/images/g-lhh5kxeaakvz_.jpg",
+      "body": "\\# システム起動テスト\n\n\n\nこれは管理画面からのテスト投稿です。\n\n画像と本文が正しく表示されるか確認しています。\n\n\n\n\\## 確認事項\n\n\\- 画像は表示されているか？\n\n\\- タイトルは正しいか？\n\n\\- このリストは表示されているか？\n\n\n\nシステムの状態は\\*\\*正常\\*\\*です。"
     }
   ]
 }
