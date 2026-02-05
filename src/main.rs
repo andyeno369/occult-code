@@ -17,20 +17,24 @@ enum Route {
     NotFound,
 }
 
+// ★修正点1: データの形をCMSに合わせて変更（URLを廃止し、画像と本文を追加）
 #[derive(Clone, PartialEq, Deserialize)]
 struct Post {
     id: usize,
     title: String,
     date: String,
-    url: String,
+    #[serde(default)]
+    image: Option<String>, // 画像はない場合もあるのでOption
+    #[serde(default)]
+    body: Option<String>,  // 本文
 }
 
-// ★追加: JSONの「箱」の定義
 #[derive(Clone, PartialEq, Deserialize)]
 struct PostWrapper {
     posts: Vec<Post>,
 }
 
+// --- 以下、暗号解読機（変更なし） ---
 #[derive(Clone, PartialEq)]
 struct CipherResult {
     name: String,
@@ -66,13 +70,11 @@ impl Component for GematriaDecoder {
                     self.results.clear();
                     return true;
                 }
-
                 let mut std_sum = 0;
                 let mut rev_sum = 0;
                 let mut red_sum = 0;
                 let mut std_parts = Vec::new();
                 let mut rev_parts = Vec::new();
-
                 for c in val.to_ascii_uppercase().chars() {
                     if c.is_ascii_alphabetic() {
                         let base_num = c as u32 - 64;
@@ -85,7 +87,6 @@ impl Component for GematriaDecoder {
                         red_sum += red_num;
                     }
                 }
-
                 self.results = vec![
                     CipherResult { name: "Standard".to_string(), score: std_sum, breakdown: std_parts.join("+") },
                     CipherResult { name: "Reverse".to_string(), score: rev_sum, breakdown: rev_parts.join("+") },
@@ -102,7 +103,6 @@ impl Component for GematriaDecoder {
             let input: HtmlInputElement = e.target_unchecked_into();
             DecoderMsg::UpdateInput(input.value())
         });
-
         html! {
             <div>
                 <section class="input-group">
@@ -126,6 +126,7 @@ impl Component for GematriaDecoder {
     }
 }
 
+// --- ★修正点2: 記事表示部分（Logs）をブログ風レイアウトに変更 ---
 #[function_component(Logs)]
 fn logs() -> Html {
     let posts = use_state(|| Vec::<Post>::new());
@@ -135,16 +136,15 @@ fn logs() -> Html {
         use_effect_with((), move |_| {
             let posts = posts.clone();
             wasm_bindgen_futures::spawn_local(async move {
-                // ★修正: JSONを PostWrapper 型として受け取る
-                let fetched_wrapper: PostWrapper = Request::get("/posts.json")
-                    .send()
-                    .await
-                    .unwrap()
-                    .json()
-                    .await
-                    .unwrap();
-                // 中身の .posts をセットする
-                posts.set(fetched_wrapper.posts);
+                // 万が一JSONの形が合わなくてもパニックしないようにエラーハンドリングを追加
+                match Request::get("/posts.json").send().await {
+                    Ok(resp) => {
+                        if let Ok(fetched_wrapper) = resp.json::<PostWrapper>().await {
+                            posts.set(fetched_wrapper.posts);
+                        }
+                    }
+                    Err(_) => {} // エラー時は何もしない
+                }
             });
             || ()
         });
@@ -152,17 +152,33 @@ fn logs() -> Html {
 
     html! {
         <section>
-            <h2>{ "> SYSTEM_LOGS" }</h2>
-            <p>{ "Accessing archived protocols..." }</p>
+            <h2>{ "> SYSTEM_ARCHIVE" }</h2>
             
-            <ul style="margin-top: 1rem; list-style: none; padding: 0;">
+            <div style="display: flex; flex-direction: column; gap: 3rem;">
                 { for posts.iter().map(|post| html! {
-                    <li style="margin-bottom: 1.5rem; border-left: 2px solid #333; padding-left: 10px;">
-                        <span style="color: #888; font-size: 0.8rem;">{ &post.date }</span><br/>
-                        <a href={post.url.clone()} style="font-size: 1.1rem;">{ &post.title }</a>
-                    </li>
+                    <article style="border: 1px solid #0f0; padding: 20px; border-radius: 4px;">
+                        // 1. 日付とタイトル
+                        <div style="border-bottom: 1px dashed #0f0; padding-bottom: 10px; margin-bottom: 15px;">
+                            <span style="color: #888; font-size: 0.8rem;">{ &post.date }</span>
+                            <h3 style="margin: 5px 0 0 0; font-size: 1.5rem;">{ &post.title }</h3>
+                        </div>
+
+                        // 2. 画像があれば表示（ここが見本サイトのようなアイキャッチ画像になります）
+                        if let Some(img_url) = &post.image {
+                            <div style="margin-bottom: 15px;">
+                                <img src={img_url.clone()} style="max-width: 100%; height: auto; border: 1px solid #333;" />
+                            </div>
+                        }
+
+                        // 3. 本文（改行を反映させる簡易表示）
+                        if let Some(body_text) = &post.body {
+                            <div style="white-space: pre-wrap; line-height: 1.6; color: #ddd;">
+                                { body_text }
+                            </div>
+                        }
+                    </article>
                 }) }
-            </ul>
+            </div>
 
             if posts.is_empty() {
                 <p style="color: #555;">{ "Scanning database..." }</p>
