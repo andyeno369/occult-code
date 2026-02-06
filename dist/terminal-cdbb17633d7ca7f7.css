@@ -1,0 +1,208 @@
+/* =========================================
+   OCCULT CODE SYSTEM - COMPLETE STYLE
+   ========================================= */
+
+/* --- 1. 基本設定（黒背景・緑文字） --- */
+:root {
+    --terminal-green: #0f0;
+    --terminal-glow: #0f0;
+    --bg-color: #000;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--terminal-green);
+    font-family: 'Courier New', Courier, monospace;
+    margin: 0;
+    padding: 20px;
+    min-height: 100vh;
+    overflow-x: hidden; /* 横スクロール防止 */
+    position: relative;
+}
+
+/* --- 2. CRTモニタ風エフェクト（走査線） --- */
+body::before {
+    content: " ";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: linear-gradient(
+        rgba(18, 16, 16, 0) 50%, 
+        rgba(0, 0, 0, 0.25) 50%
+    ), linear-gradient(
+        90deg, 
+        rgba(255, 0, 0, 0.06), 
+        rgba(0, 255, 0, 0.02), 
+        rgba(0, 0, 255, 0.06)
+    );
+    z-index: 2;
+    background-size: 100% 2px, 3px 100%;
+    pointer-events: none; /* マウス操作を邪魔しない */
+    position: fixed; /* スクロールしても追従 */
+}
+
+/* --- 3. リンクのデザイン（ホバー時に反転） --- */
+a {
+    color: var(--terminal-green);
+    text-decoration: none;
+    transition: all 0.3s;
+}
+a:hover {
+    background-color: var(--terminal-green);
+    color: var(--bg-color);
+    box-shadow: 0 0 10px var(--terminal-glow);
+}
+
+/* --- 4. テキストの発光（グロー効果） --- */
+h1, h2, p, li, span, input {
+    text-shadow: 0 0 5px var(--terminal-glow);
+}
+
+/* --- 5. 点滅カーソル --- */
+.cursor-blink::after {
+    content: "█";
+    animation: blink 1s step-end infinite;
+    margin-left: 5px;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+/* --- 6. レイアウト調整 --- */
+.terminal-wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1; /* エフェクトより手前に表示 */
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    gap: 20px;
+}
+
+.dashed-line {
+    border: none;
+    border-top: 1px dashed var(--terminal-green);
+    margin: 20px 0;
+    opacity: 0.5;
+}
+
+/* 入力欄のデザイン */
+.input-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    border: 1px solid var(--terminal-green);
+    padding: 10px;
+}
+
+.cmd-input {
+    background: transparent;
+    border: none;
+    color: var(--terminal-green);
+    font-family: inherit;
+    font-size: 1.2rem;
+    width: 100%;
+    outline: none;
+}
+
+/* ゲマトリア結果カード */
+.cipher-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.cipher-card {
+    border: 1px solid var(--terminal-green);
+    padding: 15px;
+    text-align: center;
+}
+
+.cipher-value {
+    display: block;
+    font-size: 2rem;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+/* --- 7. ブログ記事のデザイン（ここが今回追加された部分！） --- */
+
+/* 記事リスト全体 */
+.post-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4rem; /* 記事ごとの間隔を広めに */
+    margin-top: 2rem;
+}
+
+/* 記事単体 */
+.blog-post {
+    padding-bottom: 2rem;
+}
+
+/* 記事ヘッダー */
+.post-header {
+    margin-bottom: 1.5rem;
+    border-left: 4px solid var(--terminal-green); /* 左に太いアクセント線 */
+    padding-left: 15px;
+}
+
+.post-date {
+    color: var(--terminal-green);
+    opacity: 0.7;
+    font-size: 0.9rem;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.post-title {
+    font-size: 1.8rem;
+    margin: 0;
+    line-height: 1.3;
+    text-shadow: 0 0 8px var(--terminal-glow); /* タイトルを強く発光させる */
+}
+
+/* 画像まわり */
+.post-image-wrapper {
+    margin: 1.5rem 0;
+    text-align: center; /* 画像を中央寄せ */
+}
+
+.post-image {
+    max-width: 100%;     /* 画面からはみ出さない */
+    height: auto;
+    border: 2px solid var(--terminal-green); /* 画像自体をターミナル枠で囲む */
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.2); /* ほんのり光らせる */
+    filter: sepia(100%) hue-rotate(50deg) saturate(300%) contrast(1.2); /* ★画像を緑色のモニター風に変換 */
+    transition: filter 0.3s;
+}
+
+.post-image:hover {
+    filter: none; /* マウスを乗せると元の色に戻るギミック */
+}
+
+/* 本文 */
+.post-body {
+    line-height: 1.8; /* 読みやすく行間を空ける */
+    font-size: 1.1rem;
+    white-space: pre-wrap; /* Markdownの改行を反映 */
+    color: #cecece; /* 本文は少しだけ白っぽくして読みやすく */
+    text-shadow: none; /* 本文は発光させない（読みやすさ優先） */
+}
+
+/* 記事の区切り線 */
+.post-separator {
+    border: none;
+    border-bottom: 1px dashed var(--terminal-green);
+    margin-top: 3rem;
+    opacity: 0.3;
+}

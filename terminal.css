@@ -1,3 +1,7 @@
+/* =========================================
+   OCCULT CODE SYSTEM - COMPLETE STYLE
+   ========================================= */
+
 /* --- 1. 基本設定（黒背景・緑文字） --- */
 :root {
     --terminal-green: #0f0;
@@ -11,8 +15,8 @@ body {
     font-family: 'Courier New', Courier, monospace;
     margin: 0;
     padding: 20px;
-    height: 100vh;
-    overflow: hidden; /* 画面外へのはみ出しを防止 */
+    min-height: 100vh;
+    overflow-x: hidden; /* 横スクロール防止 */
     position: relative;
 }
 
@@ -37,6 +41,7 @@ body::before {
     z-index: 2;
     background-size: 100% 2px, 3px 100%;
     pointer-events: none; /* マウス操作を邪魔しない */
+    position: fixed; /* スクロールしても追従 */
 }
 
 /* --- 3. リンクのデザイン（ホバー時に反転） --- */
@@ -127,4 +132,77 @@ nav ul {
     font-size: 2rem;
     font-weight: bold;
     margin-top: 10px;
+}
+
+/* --- 7. ブログ記事のデザイン（ここが今回追加された部分！） --- */
+
+/* 記事リスト全体 */
+.post-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4rem; /* 記事ごとの間隔を広めに */
+    margin-top: 2rem;
+}
+
+/* 記事単体 */
+.blog-post {
+    padding-bottom: 2rem;
+}
+
+/* 記事ヘッダー */
+.post-header {
+    margin-bottom: 1.5rem;
+    border-left: 4px solid var(--terminal-green); /* 左に太いアクセント線 */
+    padding-left: 15px;
+}
+
+.post-date {
+    color: var(--terminal-green);
+    opacity: 0.7;
+    font-size: 0.9rem;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.post-title {
+    font-size: 1.8rem;
+    margin: 0;
+    line-height: 1.3;
+    text-shadow: 0 0 8px var(--terminal-glow); /* タイトルを強く発光させる */
+}
+
+/* 画像まわり */
+.post-image-wrapper {
+    margin: 1.5rem 0;
+    text-align: center; /* 画像を中央寄せ */
+}
+
+.post-image {
+    max-width: 100%;     /* 画面からはみ出さない */
+    height: auto;
+    border: 2px solid var(--terminal-green); /* 画像自体をターミナル枠で囲む */
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.2); /* ほんのり光らせる */
+    filter: sepia(100%) hue-rotate(50deg) saturate(300%) contrast(1.2); /* ★画像を緑色のモニター風に変換 */
+    transition: filter 0.3s;
+}
+
+.post-image:hover {
+    filter: none; /* マウスを乗せると元の色に戻るギミック */
+}
+
+/* 本文 */
+.post-body {
+    line-height: 1.8; /* 読みやすく行間を空ける */
+    font-size: 1.1rem;
+    white-space: pre-wrap; /* Markdownの改行を反映 */
+    color: #cecece; /* 本文は少しだけ白っぽくして読みやすく */
+    text-shadow: none; /* 本文は発光させない（読みやすさ優先） */
+}
+
+/* 記事の区切り線 */
+.post-separator {
+    border: none;
+    border-bottom: 1px dashed var(--terminal-green);
+    margin-top: 3rem;
+    opacity: 0.3;
 }

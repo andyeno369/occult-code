@@ -1,11 +1,10 @@
 backend:
   name: git-gateway
-  branch: main # もしGitHubのブランチがmasterならここをmasterに変えてください
+  branch: main
 
-media_folder: "images"
-public_folder: "/images"
+media_folder: "images" # 画像本体の保存場所
+public_folder: "/images" # 記事から参照する時のパス
 
-# ここが重要：フォルダではなく「posts.json」単体を編集する設定
 collections:
   - name: "logs"
     label: "System Logs"
@@ -18,7 +17,17 @@ collections:
             name: "posts"
             widget: "list"
             fields:
+              # 記事ID（管理用）
               - {label: "ID", name: "id", widget: "number", default: 0}
-              - {label: "Protocol Title", name: "title", widget: "string"}
+              
+              # 記事タイトル
+              - {label: "Title", name: "title", widget: "string"}
+              
+              # 日付
               - {label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false}
-              - {label: "Link URL", name: "url", widget: "string", default: "#"}
+              
+              # サムネイル画像（追加機能！）
+              - {label: "Thumbnail", name: "image", widget: "image", required: false}
+              
+              # 本文エディタ（追加機能！ここが見本のような記事を書く場所）
+              - {label: "Body", name: "body", widget: "markdown"}

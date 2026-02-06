@@ -126,7 +126,6 @@ impl Component for GematriaDecoder {
     }
 }
 
-// --- ★修正点2: 記事表示部分（Logs）をブログ風レイアウトに変更 ---
 #[function_component(Logs)]
 fn logs() -> Html {
     let posts = use_state(|| Vec::<Post>::new());
@@ -136,14 +135,13 @@ fn logs() -> Html {
         use_effect_with((), move |_| {
             let posts = posts.clone();
             wasm_bindgen_futures::spawn_local(async move {
-                // 万が一JSONの形が合わなくてもパニックしないようにエラーハンドリングを追加
                 match Request::get("/posts.json").send().await {
                     Ok(resp) => {
                         if let Ok(fetched_wrapper) = resp.json::<PostWrapper>().await {
                             posts.set(fetched_wrapper.posts);
                         }
                     }
-                    Err(_) => {} // エラー時は何もしない
+                    Err(_) => {}
                 }
             });
             || ()
@@ -151,42 +149,44 @@ fn logs() -> Html {
     }
 
     html! {
-        <section>
+        <section class="logs-container">
             <h2>{ "> SYSTEM_ARCHIVE" }</h2>
             
-            <div style="display: flex; flex-direction: column; gap: 3rem;">
+            <div class="post-list">
                 { for posts.iter().map(|post| html! {
-                    <article style="border: 1px solid #0f0; padding: 20px; border-radius: 4px;">
-                        // 1. 日付とタイトル
-                        <div style="border-bottom: 1px dashed #0f0; padding-bottom: 10px; margin-bottom: 15px;">
-                            <span style="color: #888; font-size: 0.8rem;">{ &post.date }</span>
-                            <h3 style="margin: 5px 0 0 0; font-size: 1.5rem;">{ &post.title }</h3>
-                        </div>
+                    <article class="blog-post">
+                        // 1. ヘッダー（日付とタイトル）
+                        <header class="post-header">
+                            <span class="post-date">{ &post.date }</span>
+                            <h3 class="post-title">{ &post.title }</h3>
+                        </header>
 
-                        // 2. 画像があれば表示（ここが見本サイトのようなアイキャッチ画像になります）
+                        // 2. アイキャッチ画像
                         if let Some(img_url) = &post.image {
-                            <div style="margin-bottom: 15px;">
-                                <img src={img_url.clone()} style="max-width: 100%; height: auto; border: 1px solid #333;" />
+                            <div class="post-image-wrapper">
+                                <img src={img_url.clone()} class="post-image" />
                             </div>
                         }
 
-                        // 3. 本文（改行を反映させる簡易表示）
+                        // 3. 本文
                         if let Some(body_text) = &post.body {
-                            <div style="white-space: pre-wrap; line-height: 1.6; color: #ddd;">
+                            <div class="post-body">
                                 { body_text }
                             </div>
                         }
+                        
+                        // 記事の区切り線
+                        <hr class="post-separator" />
                     </article>
                 }) }
             </div>
 
             if posts.is_empty() {
-                <p style="color: #555;">{ "Scanning database..." }</p>
+                <p class="loading-text">{ "Scanning database..." }</p>
             }
         </section>
     }
 }
-
 fn switch(routes: Route) -> Html {
     match routes {
         Route::Home => html! { <GematriaDecoder /> },
