@@ -2,10 +2,10 @@
   "posts": [
     {
       "id": 1,
-      "title": "System Initialization",
-      "date": "2026-02-06",
+      "title": "System Online",
+      "date": "2026-02-07",
       "image": "",
-      "body": "# Welcome to the System\n\nこれはテスト記事です。**太字**やリストも使えます。\n\n- 項目1\n- 項目2"
+      "body": "# システム正常稼働\n\nデータベースの修復が完了しました。\n記事データの読み込みテストを実施中。\n\n- 接続: 安定\n- セキュリティ: 有効"
     }
   ]
 }
